@@ -33,6 +33,18 @@ The same trap hit a second user in the EUREX Discord thread (game starts, no pre
 menu options, empty Missions button = EUR scripts not loading because the engine's
 `script/main.nut` replaced the mod's).
 
+## Verification without the rig
+
+The rig was unreachable when this repo was built, so the hunks were checked against the
+`diff` outputs the rig sessions recorded right after each patch (backup vs patched file,
+2026-10-16 21:14 and 2026-10-19 01:58, 05:15, 05:35). Every added and removed line in those
+diffs matches the hunks in `apply_hotfix.py` line for line, for all six files. Encodings on
+the rig: eurMapHelpers.nut, eurCampaignTriggers.nut, campaign_script.txt and
+monsterAbilityConfig.nut are CRLF (campaign_script and eurMapHelpers UTF-8 without BOM in
+`file` output), eurGeneralBGSwap.nut is LF; the patcher preserves whichever it finds.
+`apply_hotfix.py --check` on the rig should report `already-applied` for all six once it is
+back online.
+
 ## Not included
 
 - Tharbad east/west battle-map change (2026-10-13, three scripts, never tested) and the
