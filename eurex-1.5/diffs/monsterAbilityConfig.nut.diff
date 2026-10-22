@@ -1,0 +1,11 @@
+--- "D:/SteamLibrary/steamapps/common/Medieval II Total War/mods/EUREX1.5/script/eur/battle/monsterAbilityConfig.nut"	2026-10-10 00:26:42.000000000 -0700
++++ "D:/SteamLibrary/steamapps/common/Medieval II Total War/mods/Divide_and_Conquer_EUR/script/eur/battle/monsterAbilityConfig.nut"	2026-10-18 22:35:12.680585900 -0700
+@@ -3,7 +3,7 @@
+ // Restart the game after editing. Debug changes only drawing, never damage or geometry.
+ // descr_monsters/EDU values remain engine defaults for units outside this table.
+ ::EUR.monsterAbilities <- {
+-    debugAoeOutline = true,
++    debugAoeOutline = false,   // was true in 1.5: drew green debug outlines under monster area attacks
+ 
+     // Native radial splash keeps its exponential damage/falloff/shape curve.
+     // meleeArea, when present, replaces radial splash with an actor-relative shape.

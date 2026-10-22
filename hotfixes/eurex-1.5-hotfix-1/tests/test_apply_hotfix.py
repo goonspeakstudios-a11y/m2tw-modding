@@ -32,6 +32,7 @@ STYLE = {
     "data/world/maps/campaign/imperial_campaign/campaign_script.txt": (True, True),
     "script/eur/battle/monsterAbilityConfig.nut": (True, False),
     "script/eur/loaded/eurCasLoad.nut": (False, True),
+    "script/eur/battle/eursetBattleMapPKG.nut": (False, False),
 }
 
 

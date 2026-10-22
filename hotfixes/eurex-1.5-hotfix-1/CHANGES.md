@@ -1,6 +1,6 @@
 # EUREX 1.5 hotfix 1 - what it changes and where it came from
 
-Target: EUREX 1.5 overlay on Divide and Conquer EUR, M2EX engine build of 2026-10-15.
+Target: EUREX 1.5 overlay on Divide and Conquer EUR, M2EX engine build of 2026-10-15. Seven file patches.
 Source: the fixes BB1 applied on the Windows rig between 2026-10-15 and 2026-10-19
 (Claude Code sessions "Mtw2 not starting with euec launcher", "REX/M2eX mods in develop",
 "Amon Hen, upgrade icon, pathfinding"). None of this was in a git repository before;
@@ -16,6 +16,7 @@ the drop-in zip lived at `C:\Users\BigBoss1\Desktop\EUR_1.5_FixPack_upload\`.
 | 4 | `data/world/maps/campaign/imperial_campaign/campaign_script.txt` | Reclaiming Moria quest (Durin's Folk, Mirkwood southern route): arrow target shows "Restricted area". | The 1.5 map added `Emyn_Nu_Fuin_Province` in the Mountains of Mirkwood. The quest's step-2 pointer (327,392) lies inside it and legs 2-3 and 3-4 cross it, but the three `restrict_clickable_area` whitelists never named it. Province added to all three lines (one also gains `Elven_Mirkwood_Province`). | NEW campaign only |
 | 5 | `script/eur/battle/monsterAbilityConfig.nut` | Monster area attacks (trolls, Balrog, Mumakil) draw green shapes on the battlefield. | `debugAoeOutline = true` shipped in 1.5. Set to `false`. Drawing only, no damage or geometry change. | Restart game |
 | 6 | `script/eur/loaded/eurCasLoad.nut` | Diagnostic only. | Logs `[EUR cas] <town> tile x,y model N` per custom town and `[EUR cas] not found: <name>` when a table entry has no settlement, so a missing model can be traced from `system.log.txt`. | Restart game |
+| 7 | `script/eur/battle/eursetBattleMapPKG.nut` | No EUR custom settlement battle map ever loads (Tharbad, Weathertop, Hobbiton, Bree, Minas Ithil, Osgiliath, Isengard...): every siege plays on a generic engine map. | EUR defines the picker `::EUR.onSelectWorldpkgdesc` (keyed by defender tile "x,y" in `::EUR.custom_maps`) but never registered it with the M2EX engine event `selectWorldpkgdesc`. A wrapper now registers it, returns null when the engine's choice stands, and logs `[EUR maps] tile x,y engine=... -> ...` to `system.log.txt`. The fix dates from 2026-10-14 (EUREX 1.4.2), survived the 1.5 overlay because 1.5 does not ship this file, and was left out of the 10-18 pack and the first repo commit by mistake. Confirmed firing on the Oct-15 engine on 2026-10-16 (tile 188,333 -> South Tharbad). | Restart game |
 
 ## Install-level fix (not a file patch; see README.txt)
 
@@ -38,12 +39,12 @@ menu options, empty Missions button = EUR scripts not loading because the engine
 The rig was unreachable when this repo was built, so the hunks were checked against the
 `diff` outputs the rig sessions recorded right after each patch (backup vs patched file,
 2026-10-16 21:14 and 2026-10-19 01:58, 05:15, 05:35). Every added and removed line in those
-diffs matches the hunks in `apply_hotfix.py` line for line, for all six files. Encodings on
+diffs matches the hunks in `apply_hotfix.py` line for line, for all six files (the seventh, the battle-map hook, was added on the rig on 2026-10-22). Encodings on
 the rig: eurMapHelpers.nut, eurCampaignTriggers.nut, campaign_script.txt and
 monsterAbilityConfig.nut are CRLF (campaign_script and eurMapHelpers UTF-8 without BOM in
 `file` output), eurGeneralBGSwap.nut is LF; the patcher preserves whichever it finds.
-`apply_hotfix.py --check` on the rig should report `already-applied` for all six once it is
-back online.
+`apply_hotfix.py --check` on the rig reported `already-applied` for all seven on 2026-10-22, and applying
+the patcher to a fresh copy of the stock 1.5 files reproduced the rig's seven files byte for byte.
 
 ## Not included
 

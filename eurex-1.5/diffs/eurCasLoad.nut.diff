@@ -1,0 +1,18 @@
+--- "D:/SteamLibrary/steamapps/common/Medieval II Total War/mods/EUREX1.5/script/eur/loaded/eurCasLoad.nut"	2026-10-09 02:10:32.000000000 -0700
++++ "D:/SteamLibrary/steamapps/common/Medieval II Total War/mods/Divide_and_Conquer_EUR/script/eur/loaded/eurCasLoad.nut"	2026-10-18 22:15:15.790448000 -0700
+@@ -49,6 +49,7 @@
+     foreach (name, modelID in ::EUR.strat_cas_setts) {
+         local sett = ::EUR.eur_sMap.findSettlement(name)
+         if (sett != null) { ::EUR.setCasSett(sett) }
++        else { try { ::game.log("[EUR cas] not found: " + name) } catch (e) {} }
+     }
+     ::EUR.logHelper("setCasStandalone end")
+ }
+@@ -61,6 +62,7 @@
+             ::EUR.strat_cas_setts[sett.name] = sett.level >= 3 ? 58 : 57
+         }
+         local modelID = ::EUR.strat_cas_setts[sett.name]
++        try { ::game.log("[EUR cas] " + sett.name + " tile " + sett.tileX + "," + sett.tileY + " model " + modelID) } catch (e) {}
+         ::game.models.setOnTile(sett.tileX, sett.tileY, modelID, modelID)
+     }
+     ::EUR.logHelper("setCasSett end")

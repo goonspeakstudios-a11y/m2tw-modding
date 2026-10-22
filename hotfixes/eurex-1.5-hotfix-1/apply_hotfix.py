@@ -275,6 +275,68 @@ PATCHES: tuple[FilePatch, ...] = (
             ),
         ),
     ),
+    FilePatch(
+        rel_path="script/eur/battle/eursetBattleMapPKG.nut",
+        title="Custom settlement battle maps never loading (picker defined but never registered with the engine)",
+        hunks=(
+            Hunk(
+                old=(
+                    "// Picks a custom battle-map package by the defender tile's coordinates.\n"
+                    '// custom_maps is populated in eurCasLoad (keyed "x,y").\n'
+                    '::EUR.onSelectWorldpkgdesc <- function(selectedRecord, selectedRecordGroup) {\n'
+                    '    local battle = ::battle.current()\n'
+                    '    if (battle == null) { return selectedRecord }\n'
+                    '\n'
+                    '    local xCoord = battle.defenderX\n'
+                    '    local yCoord = battle.defenderY\n'
+                    '    if (xCoord == 0 || yCoord == 0) { return selectedRecord }\n'
+                    '\n'
+                    '    local coordKey = xCoord + "," + yCoord\n'
+                    '    if (coordKey in ::EUR.custom_maps) {\n'
+                    '        selectedRecord = ::EUR.custom_maps[coordKey]\n'
+                    '    }\n'
+                    '    return selectedRecord\n'
+                    '}\n'
+                ),
+                new=(
+                    "// Picks a custom battle-map package by the defender tile's coordinates.\n"
+                    '// custom_maps is populated in eurCasLoad (keyed "x,y").\n'
+                    '::EUR.onSelectWorldpkgdesc <- function(selectedRecord, selectedRecordGroup) {\n'
+                    '    local battle = ::battle.current()\n'
+                    '    if (battle == null) { return selectedRecord }\n'
+                    '\n'
+                    '    local xCoord = battle.defenderX\n'
+                    '    local yCoord = battle.defenderY\n'
+                    '    if (xCoord == 0 || yCoord == 0) { return selectedRecord }\n'
+                    '\n'
+                    '    local coordKey = xCoord + "," + yCoord\n'
+                    '    if (coordKey in ::EUR.custom_maps) {\n'
+                    '        selectedRecord = ::EUR.custom_maps[coordKey]\n'
+                    '    }\n'
+                    '    return selectedRecord\n'
+                    '}\n'
+                    '\n'
+                    '// Hotfix: the picker above was never registered with M2EX, so no custom\n'
+                    "// battle map ever loaded. Hook it to the engine's selectWorldpkgdesc event.\n"
+                    '::events.on("selectWorldpkgdesc", function(...) {\n'
+                    '    local rec = vargv.len() > 0 ? vargv[0] : null\n'
+                    '    local grp = vargv.len() > 1 ? vargv[1] : null\n'
+                    '    local picked = rec\n'
+                    '    try {\n'
+                    '        picked = ::EUR.onSelectWorldpkgdesc(rec, grp)\n'
+                    '        local b = ::battle.current()\n'
+                    '        local where = b == null ? "?" : (b.defenderX + "," + b.defenderY)\n'
+                    '        ::game.log("[EUR maps] tile " + where + " engine=" + rec + " group=" + grp + " -> " + picked)\n'
+                    '    } catch (e) {\n'
+                    '        ::game.log("[EUR maps] error: " + e)\n'
+                    '        return null\n'
+                    '    }\n'
+                    '    return picked == rec ? null : picked\n'
+                    '})\n'
+                ),
+            ),
+        ),
+    ),
 )
 
 

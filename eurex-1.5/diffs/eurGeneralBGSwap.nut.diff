@@ -1,0 +1,27 @@
+--- "D:/SteamLibrary/steamapps/common/Medieval II Total War/mods/EUREX1.5/script/eur/upgrades/eurGeneralBGSwap.nut"	2026-10-07 04:33:26.000000000 -0700
++++ "D:/SteamLibrary/steamapps/common/Medieval II Total War/mods/Divide_and_Conquer_EUR/script/eur/upgrades/eurGeneralBGSwap.nut"	2026-10-16 14:14:22.090329100 -0700
+@@ -643,8 +643,22 @@
+ 
+     function render() {
+         this.buildOnce()
+-        ::EUR.syncLeftWindows()
+-        this.checkcard()
++        try {
++            ::EUR.syncLeftWindows()
++            this.checkcard()
++        } catch (e) {
++            // The remembered selection can go stale (general died in battle, save reloaded,
++            // army merged). Without this guard the engine drops this frame handler for the
++            // rest of the session and the bodyguard/upgrade crest never draws again.
++            println("EUR BGSwap: stale selection cleared after error: " + e)
++            ::EUR.temp_fort_char = null
++            ::EUR.sel_unit = null
++            ::EUR.can_bg_swap = false
++            ::EUR.can_unit_upgrade = false
++            if (this.cardBtn != 0) { ::UI.widgetVisible(this.cardBtn, false) }
++            if (this.upgradeBtn != 0) { ::UI.widgetVisible(this.upgradeBtn, false) }
++            ::EUR.set_active_left_window("")
++        }
+ 
+         local showSwap = ::EUR.window_states.swap_bg_window && ::EUR.in_campaign_map
+                          && !::EUR.show_bg_accept && ::EUR.can_bg_swap

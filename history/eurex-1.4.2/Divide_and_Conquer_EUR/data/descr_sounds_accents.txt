@@ -1,0 +1,55 @@
+;############################
+;##### SOUNDS - ACCENTS #####
+;############################
+
+accent Arabic
+	factions khand, spain, venice
+
+accent DolAmroth
+	factions 
+
+accent English
+	factions aztecs, byzantium, milan, russia, scotland, scripts, slave, teutonic_order, timurids, turks, portugal, Bree_Folk, barrow_wights
+
+accent German
+	factions england, france, hre, papal_states, poland, gundabad, normans,
+
+accent Gondor
+	factions sicily, united
+
+accent Quenya
+	factions 
+
+accent Scottish
+	factions hungary, moors, norway
+
+accent Sindarin
+	factions ireland, mongols, saxons, egypt, denmark
+
+accent GondorArchers
+	factions 
+
+accent GondorCavalry 
+	factions 
+
+accent GondorInfantry
+	factions
+
+accent GondorFountainGuard
+	factions 
+
+accent GondorIthilianRangers
+	factions
+
+accent IsengardBerserkers
+	factions 
+
+accent IsengardUrukPikes
+	factions
+
+accent IsengardUruks
+	factions
+
+accent Female
+	factions
+	

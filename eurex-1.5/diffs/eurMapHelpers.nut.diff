@@ -1,0 +1,22 @@
+--- "D:/SteamLibrary/steamapps/common/Medieval II Total War/mods/EUREX1.5/script/eur/eru/eurMapHelpers.nut"	2026-10-15 19:21:36.000000000 -0700
++++ "D:/SteamLibrary/steamapps/common/Medieval II Total War/mods/Divide_and_Conquer_EUR/script/eur/eru/eurMapHelpers.nut"	2026-10-18 18:58:28.501558300 -0700
+@@ -121,7 +121,8 @@
+ //table of maps, coordinates on left, file name on right
+ ::EUR.custom_maps <- {
+ 	["121,380"] = "longbottom_a",              //(Michel_Derving)
+-	["134,386"] = "hobbiton_a",                //(Hobiton)
++	["133,385"] = "hobbiton_a",                //(Hobiton) tile on the current map (was 134,386)
++	["166,380"] = "bree_a",                    //(Bree) package tagged normans; town runs on the Bree_Folk plan, engine may ignore
+ 	["144,375"] = "hobbit_village_a",          //(Lomgbotom)
+ 	["169,358"] = "hobbit_village_a", // Underhill
+ 	["147,380"] = "hobbit_village_a",              //(Buckland)
+@@ -240,7 +241,8 @@
+ 	["Henneth_Annun"] = 51,
+ 	["eursett_1"] = 50,          //(Hobbiton)
+ 	["eursett_2"] = 53,          //(Longbottom)
+-	["eursett_15"] = 11,         //(Amon Hen)
++	["Amon_Hen"] = 11,           //(Amon Hen) current settlement name
++	["eursett_15"] = 11,         //(Amon Hen) old alias for older saves
+ 	["Umbar"] = 23,              //(Umbar)
+ 	["Iron_Hills"] = 27,         //(Iron hills)
+ 	["Gobel_Ancalimon"] = 22,    //(Faenobel)

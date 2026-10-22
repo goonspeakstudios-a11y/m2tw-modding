@@ -1,0 +1,66 @@
+--- "D:/SteamLibrary/steamapps/common/Medieval II Total War/mods/EUREX1.5/script/helper/eurCampaignTriggers.nut"	2026-10-15 19:21:36.000000000 -0700
++++ "D:/SteamLibrary/steamapps/common/Medieval II Total War/mods/Divide_and_Conquer_EUR/script/helper/eurCampaignTriggers.nut"	2026-10-18 18:58:28.501558300 -0700
+@@ -22,6 +22,8 @@
+     ::EUR.eur_numberOfFactions = ::game.factionCount()
+     ::EUR.eur_playerFactionId = ::game.localFactionId()
+     ::EUR.eur_player_faction = ::game.localFaction()
++    try { ::game.log("[EUR boot] campaignBoot start, first_run=" + ::EUR.options_first_run
++        + " show_options=" + ::EUR.show_options_window + " cas_done=" + ::EUR.cas_standalone_set_already) } catch (e) {}
+     // Before anything can build a widget - every EUR window's render() refuses until the line above
+     // has run, precisely so the palette below is in place first.
+     ::EUR.buildStyles(::EUR.eur_player_faction != null ? ::EUR.eur_player_faction.name : null)
+@@ -59,11 +61,17 @@
+     ::EUR.strat_cas_setts["Carn_Dum"] <- 57
+     // Restore Skarhald mountain appearance after older saved model tables load.
+     ::EUR.strat_cas_setts["Skarhald"] <- 60
++    // The M2EX script VM survives leaving a campaign, so a once-per-process guard left every
++    // campaign after the first (load or new) with the engine's default city models (Bree etc.).
++    // Stamp on every campaign boot; the model re-add is harmless when the models already exist.
+     if (!::EUR.cas_standalone_set_already) {
+         ::EUR.loadStratCAS()
+-        ::EUR.setCasStandalone()
+         ::EUR.cas_standalone_set_already = true
++    } else {
++        try { ::EUR.loadStratCAS() } catch (e) { ::game.log("[EUR cas] model re-add skipped: " + e) }
+     }
++    ::EUR.setCasStandalone()
++    try { ::game.log("[EUR cas] settlement models applied") } catch (e) {}
+     // Reapply on every campaign load, including another save in this session.
+     ::EUR.setCasSett(::EUR.eur_sMap.findSettlement("Kuru_leiri"))
+     ::EUR.setCasSett(::EUR.eur_sMap.findSettlement("Suri_kyla"))
+@@ -314,16 +322,22 @@
+ 
+     // Called after loading the campaign map
+     ::events.on("campaignMapLoaded", function() {
++        try { ::game.log("[EUR boot] campaignMapLoaded") } catch (e) {}
+         ::EUR.campaignBoot()
++        try { ::game.log("[EUR boot] campaignBoot done, in_map=" + ::EUR.in_campaign_map
++            + " first_run=" + ::EUR.options_first_run + " show_options=" + ::EUR.show_options_window
++            + " presets=" + ::EUR.campaignPresets.len()) } catch (e) {}
+     })
+ 
+     ::events.on("exitToMenu", function() {
++        try { ::game.log("[EUR boot] exitToMenu") } catch (e) {}
+         ::EUR.in_campaign_map = false
+     })
+ 
+     // newGameStart fires in the DataBuild phase - ::game is Campaign-gated, so the counter has to
+     // wait for campaignMapLoaded (it is set there instead).
+     ::events.on("newGameStart", function() {
++        try { ::game.log("[EUR boot] newGameStart, first_run=" + ::EUR.options_first_run) } catch (e) {}
+         if (!::EUR.options_first_run) {
+             ::EUR.resetGameVars()
+         }
+@@ -345,10 +359,12 @@
+             }
+         }
+         ::EUR.preparePresetChoice()
++        try { ::game.log("[EUR boot] newGameLoaded: preset choice prepared") } catch (e) {}
+         //::EUR.show_genenabled = true
+     })
+ 
+     ::events.on("unloadCampaign", function() {
++        try { ::game.log("[EUR boot] unloadCampaign") } catch (e) {}
+         if (::EUR.to_log) { println("EUR SCRIPT: " + "onUnloadCampaign") }
+         ::EUR.in_campaign_map = false
+         if (::EUR.to_log) { println("EUR SCRIPT END: " + "onUnloadCampaign") }

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build the drop-in zip (EUR_1.5_FixPack.zip) from an already patched mod folder.
 
-The zip holds Divide_and_Conquer_EUR/<the six patched files> plus README.txt, so a player
+The zip holds Divide_and_Conquer_EUR/<the seven patched files> plus README.txt, so a player
 extracts it into their "mods" folder and overwrites. Every file is verified to carry the
 hotfix text before it is packed; a file that is unpatched or mismatched aborts the build.
 
@@ -22,7 +22,7 @@ import zipfile
 import apply_hotfix as hf
 
 MOD_FOLDER_NAME = "Divide_and_Conquer_EUR"
-ZIP_NAME = "EUR_1.5_FixPack.zip"
+ZIP_NAME = "EUR_1.5.1_FixPack.zip"
 README_NAME = "README.txt"
 
 log = logging.getLogger("eurex15.pack")

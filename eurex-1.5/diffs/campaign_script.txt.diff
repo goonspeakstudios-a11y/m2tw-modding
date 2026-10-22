@@ -1,0 +1,29 @@
+--- "D:/SteamLibrary/steamapps/common/Medieval II Total War/mods/EUREX1.5/data/world/maps/campaign/imperial_campaign/campaign_script.txt"	2026-10-15 20:00:50.000000000 -0700
++++ "D:/SteamLibrary/steamapps/common/Medieval II Total War/mods/Divide_and_Conquer_EUR/data/world/maps/campaign/imperial_campaign/campaign_script.txt"	2026-10-18 18:58:28.518251500 -0700
+@@ -17935,7 +17935,7 @@
+                     if I_CompareCounter moria_reclaiming_dwarves_status = 3
+                         if I_CharacterTypeNearTile norway named_character, 3 316, 392
+                             ui_flash_stop
+-                            restrict_clickable_area Middle_Mirkwood_Province Central_Mirkwood_Province Central_Vale_Province Woodsmen_Province Deep_Mirkwood_Province
++                            restrict_clickable_area Middle_Mirkwood_Province Central_Mirkwood_Province Central_Vale_Province Woodsmen_Province Deep_Mirkwood_Province Emyn_Nu_Fuin_Province
+                             point_at_strat_position 289, 393
+                             set_counter moria_reclaiming_dwarves_status 4
+                             if RandomPercent > 50
+@@ -18003,7 +18003,7 @@
+                     if I_CompareCounter moria_reclaiming_dwarves_status = 2
+                         if I_CharacterTypeNearTile norway named_character, 3 327, 392
+                             ui_flash_stop
+-                            restrict_clickable_area Central_Mirkwood_Province Middle_Mirkwood_Province Deep_Mirkwood_Province
++                            restrict_clickable_area Central_Mirkwood_Province Middle_Mirkwood_Province Deep_Mirkwood_Province Emyn_Nu_Fuin_Province Elven_Mirkwood_Province
+                             point_at_strat_position 316, 392
+                             set_counter moria_reclaiming_dwarves_status 3
+                             console_command create_unit balin_1 "Woodland Sentinels" 2 1 0 1
+@@ -18066,7 +18066,7 @@
+                     if I_CompareCounter moria_reclaiming_dwarves_status = 1
+                         if I_CharacterTypeNearTile norway named_character, 3 338, 399
+                             ui_flash_stop
+-                            restrict_clickable_area Central_Mirkwood_Province Elven_Mirkwood_Province Esgaroth_Province
++                            restrict_clickable_area Central_Mirkwood_Province Elven_Mirkwood_Province Esgaroth_Province Emyn_Nu_Fuin_Province
+                             point_at_strat_position 327, 392
+                             set_counter moria_reclaiming_dwarves_status 2
+                             if RandomPercent > 50
