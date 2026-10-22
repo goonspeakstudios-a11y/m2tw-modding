@@ -1,5 +1,5 @@
---- "D:/SteamLibrary/steamapps/common/Medieval II Total War/mods/Divide_and_Conquer_EUR/script/eur/battle/eursetBattleMapPKG.nut.bak_hook"	2026-10-14 18:00:38.255362700 -0700
-+++ "D:/SteamLibrary/steamapps/common/Medieval II Total War/mods/Divide_and_Conquer_EUR/script/eur/battle/eursetBattleMapPKG.nut"	2026-10-14 18:00:38.287878900 -0700
+--- a/stock-1.5/script/eur/battle/eursetBattleMapPKG.nut
++++ b/fixed/script/eur/battle/eursetBattleMapPKG.nut
 @@ -14,3 +14,21 @@
      }
      return selectedRecord

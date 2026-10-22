@@ -1,5 +1,5 @@
---- "D:/SteamLibrary/steamapps/common/Medieval II Total War/mods/EUREX1.5/data/world/maps/campaign/imperial_campaign/campaign_script.txt"	2026-10-15 20:00:50.000000000 -0700
-+++ "D:/SteamLibrary/steamapps/common/Medieval II Total War/mods/Divide_and_Conquer_EUR/data/world/maps/campaign/imperial_campaign/campaign_script.txt"	2026-10-18 18:58:28.518251500 -0700
+--- a/stock-1.5/data/world/maps/campaign/imperial_campaign/campaign_script.txt
++++ b/fixed/data/world/maps/campaign/imperial_campaign/campaign_script.txt
 @@ -17935,7 +17935,7 @@
                      if I_CompareCounter moria_reclaiming_dwarves_status = 3
                          if I_CharacterTypeNearTile norway named_character, 3 316, 392

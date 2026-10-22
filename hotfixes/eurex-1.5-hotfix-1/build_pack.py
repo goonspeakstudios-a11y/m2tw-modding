@@ -22,7 +22,7 @@ import zipfile
 import apply_hotfix as hf
 
 MOD_FOLDER_NAME = "Divide_and_Conquer_EUR"
-ZIP_NAME = "EUR_1.5.1_FixPack.zip"
+ZIP_NAME = "EUR_1.5.2_FixPack.zip"
 README_NAME = "README.txt"
 
 log = logging.getLogger("eurex15.pack")

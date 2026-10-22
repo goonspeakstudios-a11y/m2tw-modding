@@ -43,6 +43,11 @@ local CHAR_CAS = [
 
 ::EUR.setCasStandalone <- function() {
     ::EUR.logHelper("setCasStandalone")
+    // campaignMapLoaded fires after every battle as well, so take each map prop down before
+    // drawing it again; otherwise every battle would add another copy of every prop.
+    foreach (key, prop in ::EUR.strat_cas_standalone) {
+        try { ::game.models.stopDrawing(prop.modelID) } catch (e) {}
+    }
     foreach (key, prop in ::EUR.strat_cas_standalone) {
         if (prop.appearing) { ::game.models.drawAt(prop.modelID, prop.xCoord, prop.yCoord, prop.scale.tofloat()) }
     }

@@ -61,6 +61,11 @@
     ::EUR.strat_cas_setts["Carn_Dum"] <- 57
     // Restore Skarhald mountain appearance after older saved model tables load.
     ::EUR.strat_cas_setts["Skarhald"] <- 60
+    // Older saves carry their own copy of these two tables and replace the defaults on load;
+    // re-force the 1.5 settlement name and tiles the same way as Carn Dum and Skarhald above.
+    ::EUR.strat_cas_setts["Amon_Hen"] <- 11
+    ::EUR.custom_maps["133,385"] <- "hobbiton_a"
+    ::EUR.custom_maps["166,380"] <- "bree_a"
     // The M2EX script VM survives leaving a campaign, so a once-per-process guard left every
     // campaign after the first (load or new) with the engine's default city models (Bree etc.).
     // Stamp on every campaign boot; the model re-add is harmless when the models already exist.
@@ -330,14 +335,12 @@ if (::EUR.EUR_EVENT_TRIGGERS.campaign) {
     })
 
     ::events.on("exitToMenu", function() {
-        try { ::game.log("[EUR boot] exitToMenu") } catch (e) {}
         ::EUR.in_campaign_map = false
     })
 
     // newGameStart fires in the DataBuild phase - ::game is Campaign-gated, so the counter has to
     // wait for campaignMapLoaded (it is set there instead).
     ::events.on("newGameStart", function() {
-        try { ::game.log("[EUR boot] newGameStart, first_run=" + ::EUR.options_first_run) } catch (e) {}
         if (!::EUR.options_first_run) {
             ::EUR.resetGameVars()
         }
@@ -364,7 +367,6 @@ if (::EUR.EUR_EVENT_TRIGGERS.campaign) {
     })
 
     ::events.on("unloadCampaign", function() {
-        try { ::game.log("[EUR boot] unloadCampaign") } catch (e) {}
         if (::EUR.to_log) { println("EUR SCRIPT: " + "onUnloadCampaign") }
         ::EUR.in_campaign_map = false
         if (::EUR.to_log) { println("EUR SCRIPT END: " + "onUnloadCampaign") }

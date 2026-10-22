@@ -1,5 +1,5 @@
---- "D:/SteamLibrary/steamapps/common/Medieval II Total War/mods/EUREX1.5/script/eur/upgrades/eurGeneralBGSwap.nut"	2026-10-07 04:33:26.000000000 -0700
-+++ "D:/SteamLibrary/steamapps/common/Medieval II Total War/mods/Divide_and_Conquer_EUR/script/eur/upgrades/eurGeneralBGSwap.nut"	2026-10-16 14:14:22.090329100 -0700
+--- a/stock-1.5/script/eur/upgrades/eurGeneralBGSwap.nut
++++ b/fixed/script/eur/upgrades/eurGeneralBGSwap.nut
 @@ -643,8 +643,22 @@
  
      function render() {

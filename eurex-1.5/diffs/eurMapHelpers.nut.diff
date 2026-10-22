@@ -1,5 +1,5 @@
---- "D:/SteamLibrary/steamapps/common/Medieval II Total War/mods/EUREX1.5/script/eur/eru/eurMapHelpers.nut"	2026-10-15 19:21:36.000000000 -0700
-+++ "D:/SteamLibrary/steamapps/common/Medieval II Total War/mods/Divide_and_Conquer_EUR/script/eur/eru/eurMapHelpers.nut"	2026-10-18 18:58:28.501558300 -0700
+--- a/stock-1.5/script/eur/eru/eurMapHelpers.nut
++++ b/fixed/script/eur/eru/eurMapHelpers.nut
 @@ -121,7 +121,8 @@
  //table of maps, coordinates on left, file name on right
  ::EUR.custom_maps <- {

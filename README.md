@@ -4,9 +4,9 @@ Fix packs for EUREX: Divide and Conquer EUR (Medieval II Total War) running on t
 Everything here was made and verified on one Windows install; the history of every change is in
 `CHANGELOG.md`.
 
-## Current release: EUR 1.5.1 fix pack (for EUREX 1.5)
+## Current release: EUR 1.5.2 fix pack (for EUREX 1.5)
 
-Players: download `EUR_1.5.1_FixPack.zip` from the Releases page, extract it into your `mods`
+Players: download `EUR_1.5.2_FixPack.zip` from the Releases page, extract it into your `mods`
 folder, overwrite, restart the game. The Moria route fix needs a new campaign. Seven files;
 what each one fixes is in the zip's `README.txt` and in `CHANGELOG.md`.
 
@@ -24,7 +24,7 @@ what each one fixes is in the zip's `README.txt` and in `CHANGELOG.md`.
 
 ## Using the patcher instead of the zip
 
-Stdlib-only Python 3.10+. Writes `.bak_eurex15_hotfix1` backups next to each file; idempotent.
+Stdlib-only Python 3.10+. Writes `.bak_eurex15_hotfix1` backups next to each file; idempotent. It patches a STOCK 1.5 install; on an install that already has the older 1.5.1 pack, use the zip instead (it overwrites).
 
 ```
 python hotfixes/eurex-1.5-hotfix-1/apply_hotfix.py "<game>/mods/Divide_and_Conquer_EUR"

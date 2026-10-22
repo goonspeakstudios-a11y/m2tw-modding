@@ -59,10 +59,11 @@ class FilePatch:
 PATCHES: tuple[FilePatch, ...] = (
     FilePatch(
         rel_path="script/helper/eurCampaignTriggers.nut",
-        title="Custom city models going generic in the second campaign of a session",
+        title="Custom city models going generic in the second campaign of a session; Amon Hen / Hobbiton / Bree re-forced for older saves",
         hunks=(
             Hunk(
                 old=(
+                    "    ::EUR.strat_cas_setts[\"Skarhald\"] <- 60\n"
                     "    if (!::EUR.cas_standalone_set_already) {\n"
                     "        ::EUR.loadStratCAS()\n"
                     "        ::EUR.setCasStandalone()\n"
@@ -70,6 +71,12 @@ PATCHES: tuple[FilePatch, ...] = (
                     "    }\n"
                 ),
                 new=(
+                    "    ::EUR.strat_cas_setts[\"Skarhald\"] <- 60\n"
+                    "    // Older saves carry their own copy of these two tables and replace the defaults on load;\n"
+                    "    // re-force the 1.5 settlement name and tiles the same way as Carn Dum and Skarhald above.\n"
+                    "    ::EUR.strat_cas_setts[\"Amon_Hen\"] <- 11\n"
+                    "    ::EUR.custom_maps[\"133,385\"] <- \"hobbiton_a\"\n"
+                    "    ::EUR.custom_maps[\"166,380\"] <- \"bree_a\"\n"
                     "    // The M2EX script VM survives leaving a campaign, so a once-per-process guard left every\n"
                     "    // campaign after the first (load or new) with the engine's default city models (Bree etc.).\n"
                     "    // Stamp on every campaign boot; the model re-add is harmless when the models already exist.\n"
@@ -117,30 +124,6 @@ PATCHES: tuple[FilePatch, ...] = (
             ),
             Hunk(
                 old=(
-                    "    ::events.on(\"exitToMenu\", function() {\n"
-                    "        ::EUR.in_campaign_map = false\n"
-                    "    })\n"
-                ),
-                new=(
-                    "    ::events.on(\"exitToMenu\", function() {\n"
-                    "        try { ::game.log(\"[EUR boot] exitToMenu\") } catch (e) {}\n"
-                    "        ::EUR.in_campaign_map = false\n"
-                    "    })\n"
-                ),
-            ),
-            Hunk(
-                old=(
-                    "    ::events.on(\"newGameStart\", function() {\n"
-                    "        if (!::EUR.options_first_run) {\n"
-                ),
-                new=(
-                    "    ::events.on(\"newGameStart\", function() {\n"
-                    "        try { ::game.log(\"[EUR boot] newGameStart, first_run=\" + ::EUR.options_first_run) } catch (e) {}\n"
-                    "        if (!::EUR.options_first_run) {\n"
-                ),
-            ),
-            Hunk(
-                old=(
                     "        ::EUR.preparePresetChoice()\n"
                     "        //::EUR.show_genenabled = true\n"
                 ),
@@ -148,17 +131,6 @@ PATCHES: tuple[FilePatch, ...] = (
                     "        ::EUR.preparePresetChoice()\n"
                     "        try { ::game.log(\"[EUR boot] newGameLoaded: preset choice prepared\") } catch (e) {}\n"
                     "        //::EUR.show_genenabled = true\n"
-                ),
-            ),
-            Hunk(
-                old=(
-                    "    ::events.on(\"unloadCampaign\", function() {\n"
-                    "        if (::EUR.to_log) { println(\"EUR SCRIPT: \" + \"onUnloadCampaign\") }\n"
-                ),
-                new=(
-                    "    ::events.on(\"unloadCampaign\", function() {\n"
-                    "        try { ::game.log(\"[EUR boot] unloadCampaign\") } catch (e) {}\n"
-                    "        if (::EUR.to_log) { println(\"EUR SCRIPT: \" + \"onUnloadCampaign\") }\n"
                 ),
             ),
         ),
@@ -249,8 +221,25 @@ PATCHES: tuple[FilePatch, ...] = (
     ),
     FilePatch(
         rel_path="script/eur/loaded/eurCasLoad.nut",
-        title="Per-town [EUR cas] log lines so a missing custom city model can be traced in system.log.txt",
+        title="Map props drawn once per map load instead of stacking after every battle; per-town [EUR cas] log lines",
         hunks=(
+            Hunk(
+                old=(
+                    "    foreach (key, prop in ::EUR.strat_cas_standalone) {\n"
+                    "        if (prop.appearing) { ::game.models.drawAt(prop.modelID, prop.xCoord, prop.yCoord, prop.scale.tofloat()) }\n"
+                    "    }\n"
+                ),
+                new=(
+                    "    // campaignMapLoaded fires after every battle as well, so take each map prop down before\n"
+                    "    // drawing it again; otherwise every battle would add another copy of every prop.\n"
+                    "    foreach (key, prop in ::EUR.strat_cas_standalone) {\n"
+                    "        try { ::game.models.stopDrawing(prop.modelID) } catch (e) {}\n"
+                    "    }\n"
+                    "    foreach (key, prop in ::EUR.strat_cas_standalone) {\n"
+                    "        if (prop.appearing) { ::game.models.drawAt(prop.modelID, prop.xCoord, prop.yCoord, prop.scale.tofloat()) }\n"
+                    "    }\n"
+                ),
+            ),
             Hunk(
                 old=(
                     "        local sett = ::EUR.eur_sMap.findSettlement(name)\n"
