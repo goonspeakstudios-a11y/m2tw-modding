@@ -10,6 +10,23 @@ Players: download `EUR_1.5.2_FixPack.zip` from the Releases page, extract it int
 folder, overwrite, restart the game. The Moria route fix needs a new campaign. Seven files;
 what each one fixes is in the zip's `README.txt` and in `CHANGELOG.md`.
 
+## Rule: every pack carries every fix
+
+A fix that was in any earlier pack is in every later pack. It leaves only when it is moved to
+`retired` in `hotfixes/eurex-1.5-hotfix-1/fix_registry.json` with a written reason.
+`build_pack.py` enforces this and writes no zip when:
+
+- a fix from any earlier pack (the `packs` history) is neither shipped nor retired;
+- the fix list and `apply_hotfix.py` disagree about which files are fixed;
+- the new pack's version is not recorded with exactly the shipped files;
+- the install it builds from has a file that differs from the EUREX 1.5 release, or a new script
+  module, that is neither shipped nor listed under `not_shipped` with a reason (this is how a
+  fix made in-game but never added to the pack gets caught);
+- a shipped file is unpatched, or missing from the finished zip.
+
+To add a fix: patch it in `apply_hotfix.py`, list it under `shipped`, bump `ZIP_NAME` in
+`build_pack.py`, record the new version under `packs`, add a `CHANGELOG.md` line.
+
 ## Layout
 
 | Path | Purpose |

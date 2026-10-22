@@ -38,11 +38,20 @@ the 1.5.1 pack; extract it over the top.
 - **Map props cannot stack.** Fix 1 re-applies models every time the campaign map opens, and
   the engine opens it after every battle. Each prop is now taken down before it is drawn again.
 
+- **No fix can be dropped again.** BB1's rule from 2026-10-22: every hotfix always includes
+  every fix. The pack builder now checks a fix list that records every pack ever made. It refuses
+  to build when a fix from an earlier pack is missing and was not retired with a reason. It also
+  refuses when the install has a changed file nobody put in the pack or excused. Run against BB1's
+  real install, it flags exactly the 14 files that differ from the 1.5 release, the siege-map file
+  among them, so it would have stopped the 1.5.1 mistake. The four retired fixes (Aragorn loader,
+  Aragorn module, culture-conversion guard, Barrow Wights accents) each carry their reason.
+
 ### Verification on 2026-10-22
 
 - Seven independent reviews found no syntax or logic error in the 1.5.1 changes. Their findings
   are the four items above.
-- The 11 unit tests pass.
+- The 21 unit tests pass. Ten of them cover the never-drop rule, including a replay of the 1.5.1
+  mistake.
 - Applying the patcher to a clean copy of the stock 1.5 files reproduces the seven 1.5.2 files
   byte for byte. A second run reports every file already applied.
 - Seen working in-game or in the game log before today: fix 1 (second campaign re-stamped), the

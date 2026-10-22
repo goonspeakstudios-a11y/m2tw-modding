@@ -1,0 +1,128 @@
+{
+  "rule": "Every fix that was ever in a pack is in every later pack. A fix leaves only by moving it to 'retired' with a written reason. build_pack.py refuses to build otherwise, and also refuses when the install has a changed file that is neither shipped nor listed under 'not_shipped' with a reason.",
+  "how_to_add_a_fix": "1) add the patch to PATCHES in apply_hotfix.py, 2) add it under 'shipped', 3) bump ZIP_NAME in build_pack.py and add the new version under 'packs' with every shipped file, 4) add a line to CHANGELOG.md.",
+  "shipped": [
+    {
+      "file": "script/helper/eurCampaignTriggers.nut",
+      "fix": "Custom city models keep their look in every campaign of a session; Amon Hen / Hobbiton / Bree keys re-forced for older saves",
+      "since": "2026-10-14 (1.4.2 pack), re-done 2026-10-18, hardened 2026-10-22"
+    },
+    {
+      "file": "script/eur/eru/eurMapHelpers.nut",
+      "fix": "Amon Hen custom model under its 1.5 name; Hobbiton battle map on its new tile; Bree map entry",
+      "since": "2026-10-14 (1.4.2 pack), re-done 2026-10-18"
+    },
+    {
+      "file": "script/eur/upgrades/eurGeneralBGSwap.nut",
+      "fix": "Unit-upgrade / bodyguard crest no longer disappears for the session",
+      "since": "2026-10-16"
+    },
+    {
+      "file": "data/world/maps/campaign/imperial_campaign/campaign_script.txt",
+      "fix": "Reclaiming Moria (Durin's Folk) Mirkwood route: no Restricted area at the arrow",
+      "since": "2026-10-18"
+    },
+    {
+      "file": "script/eur/battle/monsterAbilityConfig.nut",
+      "fix": "No green debug outlines under monster area attacks",
+      "since": "2026-10-18"
+    },
+    {
+      "file": "script/eur/loaded/eurCasLoad.nut",
+      "fix": "Map props never stack after battles; per-town [EUR cas] log lines",
+      "since": "2026-10-18, prop fix 2026-10-22"
+    },
+    {
+      "file": "script/eur/battle/eursetBattleMapPKG.nut",
+      "fix": "Custom settlement battle maps load (picker registered with the engine)",
+      "since": "2026-10-14 (1.4.2 pack); missing from 1.5.1 by mistake, back in 1.5.2"
+    }
+  ],
+  "retired": [
+    {
+      "file": "script/main.nut",
+      "fix": "Loaded the Aragorn journey hotfix (Aragorn fix 2026-10-12, 1.4.2 pack)",
+      "reason": "EUREX 1.5 ships its own main.nut and its own Aragorn quest module (eur.campaign.aragornQuest). Shipping our main.nut would overwrite the mod team's module list."
+    },
+    {
+      "file": "script/eur/campaign/eurAragornJourneyFix.nut",
+      "fix": "Aragorn journey chain advanced by script because the trait triggers never fire on M2EX",
+      "reason": "Superseded by EUREX 1.5's eur.campaign.aragornQuest; the 1.5 main.nut does not load this file."
+    },
+    {
+      "file": "script/eur/options/eurOptionsCustomization.nut",
+      "fix": "Automatic culture conversion no longer strips custom town models (1.4.2 pack)",
+      "reason": "EUREX 1.5 turns automatic culture conversion off (automaticCultureConversionEnabled = false), so the bug cannot happen."
+    },
+    {
+      "file": "data/descr_sounds_accents.txt",
+      "fix": "barrow_wights added to the English accent line (1.4.2 pack)",
+      "reason": "EUREX 1.5's own file lists all 34 factions."
+    }
+  ],
+  "not_shipped": [
+    {
+      "file": "data/ui/battle.sd",
+      "reason": "Rebuilt by the engine from battle.sd.xml after the 2026-10-15 install recovery; not a fix."
+    },
+    {
+      "file": "eopData/eopScripts/LuaDocs.lua",
+      "reason": "Official EUR 2.08_5 hotfix file (2026-10-11), not ours; players get it from that hotfix."
+    },
+    {
+      "file": "eopData/eopScripts/eur/army sort-merge/eurMergeArmies.lua",
+      "reason": "Official EUR 2.08_5 hotfix file (2026-10-11), not ours; players get it from that hotfix."
+    },
+    {
+      "file": "eopData/eopScripts/eur/campaign/EurMergingArmies.lua",
+      "reason": "Official EUR 2.08_5 hotfix file (2026-10-11), not ours; players get it from that hotfix."
+    },
+    {
+      "file": "eur_options.dat",
+      "reason": "BB1's own EUR option settings, written by the game."
+    },
+    {
+      "file": "script/eur/options/eurPresetDraft_legendary.nut",
+      "reason": "BB1's own saved Legendary preset, written by the game."
+    },
+    {
+      "file": "script/eur/campaign/eurAragornJourneyFix.nut",
+      "reason": "Leftover on BB1's install from 1.4.2; EUREX 1.5 does not load it (see 'retired')."
+    }
+  ],
+  "packs": {
+    "aragorn-2026-10-12": [
+      "script/main.nut",
+      "script/eur/campaign/eurAragornJourneyFix.nut"
+    ],
+    "1.4.2": [
+      "script/main.nut",
+      "script/eur/campaign/eurAragornJourneyFix.nut",
+      "script/eur/battle/eursetBattleMapPKG.nut",
+      "script/eur/eru/eurMapHelpers.nut",
+      "script/eur/options/eurOptionsCustomization.nut",
+      "script/helper/eurCampaignTriggers.nut",
+      "data/descr_sounds_accents.txt"
+    ],
+    "crest-2026-10-16": [
+      "script/eur/upgrades/eurGeneralBGSwap.nut"
+    ],
+    "1.5.1": [
+      "script/helper/eurCampaignTriggers.nut",
+      "script/eur/eru/eurMapHelpers.nut",
+      "script/eur/upgrades/eurGeneralBGSwap.nut",
+      "data/world/maps/campaign/imperial_campaign/campaign_script.txt",
+      "script/eur/battle/monsterAbilityConfig.nut",
+      "script/eur/loaded/eurCasLoad.nut"
+    ],
+    "1.5.2": [
+      "script/helper/eurCampaignTriggers.nut",
+      "script/eur/eru/eurMapHelpers.nut",
+      "script/eur/upgrades/eurGeneralBGSwap.nut",
+      "data/world/maps/campaign/imperial_campaign/campaign_script.txt",
+      "script/eur/battle/monsterAbilityConfig.nut",
+      "script/eur/loaded/eurCasLoad.nut",
+      "script/eur/battle/eursetBattleMapPKG.nut"
+    ]
+  }
+}

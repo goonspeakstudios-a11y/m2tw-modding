@@ -9,6 +9,7 @@ Run from the repository root:
 
 from __future__ import annotations
 
+import json
 import logging
 import os
 import shutil
@@ -196,6 +197,135 @@ class ApplyHotfixTests(unittest.TestCase):
         expected = {build_pack.MOD_FOLDER_NAME + "/" + p.rel_path for p in hf.PATCHES} | {build_pack.README_NAME}
         self.assertEqual(names, expected)
         self.assertTrue(os.path.isfile(os.path.join(out, build_pack.README_NAME)))
+
+
+def test_registry(**extra: list) -> dict:
+    """A registry that matches PATCHES exactly, plus whatever a test adds."""
+    shipped = [{"file": p.rel_path, "fix": p.title, "since": "test"} for p in hf.PATCHES]
+    reg = {
+        "shipped": shipped,
+        "not_shipped": [],
+        "retired": [],
+        "packs": {build_pack.pack_version(): [p.rel_path for p in hf.PATCHES]},
+    }
+    for key, value in extra.items():
+        if key == "packs":
+            reg["packs"].update(value)
+        else:
+            reg[key] = reg[key] + value
+    return reg
+
+
+def write_manifest(mod: str, rels: list[str]) -> None:
+    """A real-shaped EUREX manifest recording the CURRENT bytes of each file as the release."""
+    files = []
+    for rel in rels:
+        path = os.path.join(mod, *rel.split("/"))
+        st = os.stat(path)
+        files.append({"path": rel, "status": "unchanged",
+                      "source": {"path": rel, "size": st.st_size, "mtime_ns": st.st_mtime_ns,
+                                 "sha256": build_pack.sha256_file(path)}})
+    with open(os.path.join(mod, ".EUREX1.5", "manifest.json"), "w", encoding="utf-8") as fh:
+        json.dump({"format_version": 2, "files": files}, fh)
+
+
+class NeverDropAFixTests(unittest.TestCase):
+    """Every fix ever shipped stays in every later pack unless it is retired with a reason."""
+
+    def setUp(self) -> None:
+        self.tmp = tempfile.mkdtemp(prefix="eurex15_reg_")
+        self.mod = os.path.join(self.tmp, "Divide_and_Conquer_EUR")
+        make_mod_tree(self.mod)
+        self.out = os.path.join(self.tmp, "upload")
+        self.extra = "data/descr_extra_test.txt"
+        path = os.path.join(self.mod, *self.extra.split("/"))
+        with open(path, "w", encoding="utf-8") as fh:
+            fh.write("stock line\n")
+        write_manifest(self.mod, [p.rel_path for p in hf.PATCHES] + [self.extra])
+        self.assertEqual(hf.run(self.mod, "apply"), 0)
+
+    def tearDown(self) -> None:
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def zip_written(self) -> bool:
+        return os.path.exists(os.path.join(self.out, build_pack.ZIP_NAME))
+
+    def test_real_registry_is_consistent(self) -> None:
+        reg = build_pack.load_registry()
+        self.assertIsNotNone(reg)
+        self.assertEqual(build_pack.registry_problems(reg), [])
+
+    def test_the_1_5_1_mistake_would_be_caught(self) -> None:
+        # 1.5.1 shipped without the battle-map picker that the 1.4.2 pack carried.
+        hook = "script/eur/battle/eursetBattleMapPKG.nut"
+        reg = build_pack.load_registry()
+        reg["shipped"] = [e for e in reg["shipped"] if e["file"] != hook]
+        reg["packs"][build_pack.pack_version()] = [f for f in reg["packs"][build_pack.pack_version()] if f != hook]
+        saved = hf.PATCHES
+        try:
+            hf.PATCHES = tuple(p for p in saved if p.rel_path != hook)
+            problems = build_pack.registry_problems(reg)
+        finally:
+            hf.PATCHES = saved
+        self.assertTrue(any(hook in p and "1.4.2" in p for p in problems), problems)
+
+    def test_clean_patched_install_builds(self) -> None:
+        self.assertEqual(build_pack.build(self.mod, self.out, registry=test_registry()), 0)
+        self.assertTrue(self.zip_written())
+
+    def test_fix_from_an_older_pack_cannot_vanish(self) -> None:
+        reg = test_registry(packs={"1.4.2": ["script/eur/old/droppedFix.nut"]})
+        problems = build_pack.registry_problems(reg)
+        self.assertTrue(any("droppedFix.nut" in p for p in problems), problems)
+        self.assertEqual(build_pack.build(self.mod, self.out, registry=reg), 1)
+        self.assertFalse(self.zip_written())
+
+    def test_retiring_an_old_fix_needs_a_reason(self) -> None:
+        old = "script/eur/old/droppedFix.nut"
+        no_reason = test_registry(packs={"1.4.2": [old]}, retired=[{"file": old, "fix": "x", "reason": ""}])
+        self.assertTrue(build_pack.registry_problems(no_reason))
+        with_reason = test_registry(packs={"1.4.2": [old]}, retired=[{"file": old, "fix": "x", "reason": "obsolete in 1.5"}])
+        self.assertEqual(build_pack.registry_problems(with_reason), [])
+
+    def test_listed_fix_without_a_patch_blocks_the_build(self) -> None:
+        reg = test_registry(shipped=[{"file": "script/eur/new/unpatched.nut", "fix": "x", "since": "test"}])
+        reg["packs"][build_pack.pack_version()].append("script/eur/new/unpatched.nut")
+        self.assertTrue(build_pack.registry_problems(reg))
+        self.assertEqual(build_pack.build(self.mod, self.out, registry=reg), 1)
+        self.assertFalse(self.zip_written())
+
+    def test_current_pack_must_be_recorded(self) -> None:
+        reg = test_registry()
+        del reg["packs"][build_pack.pack_version()]
+        self.assertTrue(build_pack.registry_problems(reg))
+
+    def test_changed_file_nobody_listed_blocks_the_build(self) -> None:
+        with open(os.path.join(self.mod, *self.extra.split("/")), "w", encoding="utf-8") as fh:
+            fh.write("fixed on the rig but never added to the pack\n")
+        self.assertEqual(build_pack.unlisted_changes(self.mod, test_registry()), [self.extra])
+        self.assertEqual(build_pack.build(self.mod, self.out, registry=test_registry()), 1)
+        self.assertFalse(self.zip_written())
+        excused = test_registry(not_shipped=[{"file": self.extra, "reason": "player setting, not a fix"}])
+        self.assertEqual(build_pack.unlisted_changes(self.mod, excused), [])
+        self.assertEqual(build_pack.build(self.mod, self.out, registry=excused), 0)
+
+    def test_new_script_module_nobody_listed_blocks_the_build(self) -> None:
+        rel = "script/eur/campaign/brandNewFix.nut"
+        path = os.path.join(self.mod, *rel.split("/"))
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w", encoding="utf-8") as fh:
+            fh.write("::EUR.x <- 1\n")
+        with open(path + ".bak_test", "w", encoding="utf-8") as fh:
+            fh.write("backups are ignored\n")
+        self.assertEqual(build_pack.unlisted_changes(self.mod, test_registry()), [rel])
+        self.assertEqual(build_pack.build(self.mod, self.out, registry=test_registry()), 1)
+
+    def test_no_manifest_means_no_install_scan_but_registry_still_enforced(self) -> None:
+        os.remove(os.path.join(self.mod, ".EUREX1.5", "manifest.json"))
+        self.assertIsNone(build_pack.unlisted_changes(self.mod, test_registry()))
+        self.assertEqual(build_pack.build(self.mod, self.out, registry=test_registry()), 0)
+        reg = test_registry(packs={"1.4.2": ["script/eur/old/droppedFix.nut"]})
+        self.assertEqual(build_pack.build(self.mod, self.out + "2", registry=reg), 1)
 
 
 if __name__ == "__main__":
