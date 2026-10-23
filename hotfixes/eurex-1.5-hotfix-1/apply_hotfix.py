@@ -452,7 +452,7 @@ PATCHES: tuple[FilePatch, ...] = (
     ),
     FilePatch(
         rel_path="script/main.nut",
-        title="Auto-load optional add-on modules under script/eur40/ (no-op when the folder is absent)",
+        title="Army-limit helpers and auto-load of optional add-on modules under script/eur40/ (no-op when the folder is absent)",
         hunks=(
             Hunk(
                 old=(
@@ -465,9 +465,25 @@ PATCHES: tuple[FilePatch, ...] = (
                     "    }\n"
                     "}\n"
                     "\n"
-                    "// [EUR40] auto-load every module under script/eur40/ (absent folder = no-op)\n"
+                    "// [EUR40] shared helpers: the engine's live army limit (20, or 40 in the 40/40 army mode).\n"
+                    "// Defined here so the cap lines in EUR's scripts never depend on the add-on folder.\n"
+                    "if (!(\"armyLimit\" in ::EUR)) {\n"
+                    "    ::EUR.armyLimit <- function() {\n"
+                    "        try { return ::game.options.armyMaxSize() } catch (e) { return 20 }\n"
+                    "    }\n"
+                    "}\n"
+                    "if (!(\"garrisonUnitCap\" in ::EUR)) {\n"
+                    "    ::EUR.garrisonUnitCap <- function() {\n"
+                    "        local l = ::EUR.armyLimit()\n"
+                    "        return l <= 20 ? 20 : l - 10\n"
+                    "    }\n"
+                    "}\n"
+                    "// [EUR40] auto-load the optional add-on modules under script/eur40/ (absent folder = no-op);\n"
+                    "// the core module goes first, the rest in whatever order the engine lists them.\n"
                     "try {\n"
+                    "    try { require(\"eur40.eur40Core\") } catch (e) {}\n"
                     "    foreach (name in ::scripting.listModules(\"eur40\")) {\n"
+                    "        if (name == \"eur40.eur40Core\") continue\n"
                     "        try { require(name) } catch (e) { println(\"eur40: MODULE FAILED [\" + name + \"] \" + e) }\n"
                     "    }\n"
                     "} catch (e) {}\n"
