@@ -4,7 +4,7 @@
   "shipped": [
     {
       "file": "script/helper/eurCampaignTriggers.nut",
-      "fix": "Custom city models keep their look in every campaign of a session; Amon Hen / Hobbiton / Bree keys re-forced for older saves",
+      "fix": "Custom city models keep their look in every campaign of a session; Amon Hen / Hobbiton / Bree keys re-forced for older saves; defines ::EUR.armyLimit / ::EUR.garrisonUnitCap (2026-10-22)",
       "since": "2026-10-14 (1.4.2 pack), re-done 2026-10-18, hardened 2026-10-22"
     },
     {
@@ -14,7 +14,7 @@
     },
     {
       "file": "script/eur/upgrades/eurGeneralBGSwap.nut",
-      "fix": "Unit-upgrade / bodyguard crest no longer disappears for the session",
+      "fix": "Unit-upgrade / bodyguard crest no longer disappears for the session; unit-count caps follow the engine army limit (2026-10-22)",
       "since": "2026-10-16"
     },
     {
@@ -36,14 +36,34 @@
       "file": "script/eur/battle/eursetBattleMapPKG.nut",
       "fix": "Custom settlement battle maps load (picker registered with the engine)",
       "since": "2026-10-14 (1.4.2 pack); missing from 1.5.1 by mistake, back in 1.5.2"
+    },
+    {
+      "file": "script/eur/garrisons/eurGarrisons.nut",
+      "fix": "Unit-count caps follow the engine army limit (::EUR.armyLimit / garrisonUnitCap); no change in a 20-unit campaign",
+      "since": "2026-10-22"
+    },
+    {
+      "file": "script/eur/global_recruitment/eurGlobalRecruitment.nut",
+      "fix": "Unit-count caps follow the engine army limit (::EUR.armyLimit / garrisonUnitCap); no change in a 20-unit campaign",
+      "since": "2026-10-22"
+    },
+    {
+      "file": "script/eur/upgrades/eurLeaderHeirSwap.nut",
+      "fix": "Unit-count caps follow the engine army limit (::EUR.armyLimit / garrisonUnitCap); no change in a 20-unit campaign",
+      "since": "2026-10-22"
+    },
+    {
+      "file": "script/eur/campaign/eurSpawnGeneral.nut",
+      "fix": "Unit-count caps follow the engine army limit (::EUR.armyLimit / garrisonUnitCap); no change in a 20-unit campaign",
+      "since": "2026-10-22"
+    },
+    {
+      "file": "script/main.nut",
+      "fix": "1.5 main.nut plus one block that auto-loads optional add-on modules under script/eur40/ (hunk patch, the mod team's module list is kept)",
+      "since": "2026-10-22"
     }
   ],
   "retired": [
-    {
-      "file": "script/main.nut",
-      "fix": "Loaded the Aragorn journey hotfix (Aragorn fix 2026-10-12, 1.4.2 pack)",
-      "reason": "EUREX 1.5 ships its own main.nut and its own Aragorn quest module (eur.campaign.aragornQuest). Shipping our main.nut would overwrite the mod team's module list."
-    },
     {
       "file": "script/eur/campaign/eurAragornJourneyFix.nut",
       "fix": "Aragorn journey chain advanced by script because the trait triggers never fire on M2EX",
@@ -123,6 +143,20 @@
       "script/eur/battle/monsterAbilityConfig.nut",
       "script/eur/loaded/eurCasLoad.nut",
       "script/eur/battle/eursetBattleMapPKG.nut"
+    ],
+    "1.5.3": [
+      "script/helper/eurCampaignTriggers.nut",
+      "script/eur/eru/eurMapHelpers.nut",
+      "script/eur/upgrades/eurGeneralBGSwap.nut",
+      "data/world/maps/campaign/imperial_campaign/campaign_script.txt",
+      "script/eur/battle/monsterAbilityConfig.nut",
+      "script/eur/loaded/eurCasLoad.nut",
+      "script/eur/battle/eursetBattleMapPKG.nut",
+      "script/eur/garrisons/eurGarrisons.nut",
+      "script/eur/global_recruitment/eurGlobalRecruitment.nut",
+      "script/eur/upgrades/eurLeaderHeirSwap.nut",
+      "script/eur/campaign/eurSpawnGeneral.nut",
+      "script/main.nut"
     ]
   }
 }
