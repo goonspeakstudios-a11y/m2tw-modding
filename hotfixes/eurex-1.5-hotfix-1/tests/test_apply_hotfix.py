@@ -34,6 +34,11 @@ STYLE = {
     "script/eur/battle/monsterAbilityConfig.nut": (True, False),
     "script/eur/loaded/eurCasLoad.nut": (False, True),
     "script/eur/battle/eursetBattleMapPKG.nut": (False, False),
+    "script/eur/garrisons/eurGarrisons.nut": (False, False),
+    "script/eur/global_recruitment/eurGlobalRecruitment.nut": (False, True),
+    "script/eur/upgrades/eurLeaderHeirSwap.nut": (False, False),
+    "script/eur/campaign/eurSpawnGeneral.nut": (False, False),
+    "script/main.nut": (False, True),
 }
 
 

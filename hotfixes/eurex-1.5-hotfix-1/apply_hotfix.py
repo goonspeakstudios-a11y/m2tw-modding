@@ -133,6 +133,38 @@ PATCHES: tuple[FilePatch, ...] = (
                     "        //::EUR.show_genenabled = true\n"
                 ),
             ),
+            Hunk(
+                old=(
+                    "    ::events.on(\"campaignTick\", function() {\n"
+                    "        if (::EUR.in_campaign_map) {\n"
+                    "        }\n"
+                    "    })\n"
+                    "\n"
+                    "}\n"
+                ),
+                new=(
+                    "    ::events.on(\"campaignTick\", function() {\n"
+                    "        if (::EUR.in_campaign_map) {\n"
+                    "        }\n"
+                    "    })\n"
+                    "\n"
+                    "}\n"
+                    "\n"
+                    "// [EUR40] shared helpers: the engine's live army limit (20, or 40 in the 40/40 army mode).\n"
+                    "// Guarded so the EUR 40 units add-on can define the same ones.\n"
+                    "if (!(\"armyLimit\" in ::EUR)) {\n"
+                    "    ::EUR.armyLimit <- function() {\n"
+                    "        try { return ::game.options.armyMaxSize() } catch (e) { return 20 }\n"
+                    "    }\n"
+                    "}\n"
+                    "if (!(\"garrisonUnitCap\" in ::EUR)) {\n"
+                    "    ::EUR.garrisonUnitCap <- function() {\n"
+                    "        local l = ::EUR.armyLimit()\n"
+                    "        return l <= 20 ? 20 : l - 10\n"
+                    "    }\n"
+                    "}\n"
+                ),
+            ),
         ),
     ),
     FilePatch(
@@ -185,6 +217,22 @@ PATCHES: tuple[FilePatch, ...] = (
                     "            if (this.upgradeBtn != 0) { ::UI.widgetVisible(this.upgradeBtn, false) }\n"
                     "            ::EUR.set_active_left_window(\"\")\n"
                     "        }\n"
+                ),
+            ),
+            Hunk(
+                old=(
+                    "            } else if (charArmy.unitCount > 19) {\n"
+                ),
+                new=(
+                    "            } else if (charArmy.unitCount >= ::EUR.armyLimit()) { // [EUR40]\n"
+                ),
+            ),
+            Hunk(
+                old=(
+                    "                if (army.unitCount < 20) {\n"
+                ),
+                new=(
+                    "                if (army.unitCount < ::EUR.armyLimit()) { // [EUR40]\n"
                 ),
             ),
         ),
@@ -322,6 +370,123 @@ PATCHES: tuple[FilePatch, ...] = (
                     '    }\n'
                     '    return picked == rec ? null : picked\n'
                     '})\n'
+                ),
+            ),
+        ),
+    ),
+    FilePatch(
+        rel_path="script/eur/garrisons/eurGarrisons.nut",
+        title="AI garrison fill follows the engine army limit (unchanged at 20)",
+        hunks=(
+            Hunk(
+                old=(
+                    "                if (settlement.army.unitCount >= 20) continue\n"
+                ),
+                new=(
+                    "                if (settlement.army.unitCount >= ::EUR.garrisonUnitCap()) continue // [EUR40]\n"
+                ),
+            ),
+        ),
+    ),
+    FilePatch(
+        rel_path="script/eur/global_recruitment/eurGlobalRecruitment.nut",
+        title="Global recruitment delivery follows the engine army limit (unchanged at 20)",
+        hunks=(
+            Hunk(
+                old=(
+                    "            if (candidate.army && candidate.army.unitCount >= 20) {\n"
+                ),
+                new=(
+                    "            if (candidate.army && candidate.army.unitCount >= ::EUR.armyLimit()) { // [EUR40]\n"
+                ),
+            ),
+            Hunk(
+                old=(
+                    "        if (homeSett.siegeCount == 0 && homeSett.army && homeSett.army.unitCount < 20) {\n"
+                ),
+                new=(
+                    "        if (homeSett.siegeCount == 0 && homeSett.army && homeSett.army.unitCount < ::EUR.armyLimit()) { // [EUR40]\n"
+                ),
+            ),
+        ),
+    ),
+    FilePatch(
+        rel_path="script/eur/upgrades/eurLeaderHeirSwap.nut",
+        title="Leader / heir bodyguard swap follows the engine army limit (unchanged at 20)",
+        hunks=(
+            Hunk(
+                old=(
+                    "                                    if (char.character.bodyguard.army.unitCount < 20) {\n"
+                    "                                        ::EUR.setBodyguard(char.character, (::EUR.leaderheir_combi_list[faction.name].leader.unit), char.character.bodyguard.experience, char.character.bodyguard.weaponLevel, 0, \"\")\n"
+                ),
+                new=(
+                    "                                    if (char.character.bodyguard.army.unitCount < ::EUR.armyLimit()) { // [EUR40]\n"
+                    "                                        ::EUR.setBodyguard(char.character, (::EUR.leaderheir_combi_list[faction.name].leader.unit), char.character.bodyguard.experience, char.character.bodyguard.weaponLevel, 0, \"\")\n"
+                ),
+            ),
+            Hunk(
+                old=(
+                    "                                    if (char.character.bodyguard.army.unitCount < 20) {\n"
+                    "                                        ::EUR.setBodyguard(char.character, (::EUR.leaderheir_combi_list[faction.name].heir.unit), char.character.bodyguard.experience, char.character.bodyguard.weaponLevel, 0, \"\")\n"
+                ),
+                new=(
+                    "                                    if (char.character.bodyguard.army.unitCount < ::EUR.armyLimit()) { // [EUR40]\n"
+                    "                                        ::EUR.setBodyguard(char.character, (::EUR.leaderheir_combi_list[faction.name].heir.unit), char.character.bodyguard.experience, char.character.bodyguard.weaponLevel, 0, \"\")\n"
+                ),
+            ),
+        ),
+    ),
+    FilePatch(
+        rel_path="script/eur/campaign/eurSpawnGeneral.nut",
+        title="Spawned large-army generals follow the engine army limit (unchanged at 20)",
+        hunks=(
+            Hunk(
+                old=(
+                    "        if (army.unitCount <= 6 || army.unitCount >= 20) continue\n"
+                ),
+                new=(
+                    "        if (army.unitCount <= 6 || army.unitCount >= ::EUR.armyLimit()) continue // [EUR40]\n"
+                ),
+            ),
+        ),
+    ),
+    FilePatch(
+        rel_path="script/main.nut",
+        title="Army-limit helpers and auto-load of optional add-on modules under script/eur40/ (no-op when the folder is absent)",
+        hunks=(
+            Hunk(
+                old=(
+                    "        println(\"eur: MODULE FAILED [\" + name + \"] \" + e)\n"
+                    "    }\n"
+                    "}\n"
+                ),
+                new=(
+                    "        println(\"eur: MODULE FAILED [\" + name + \"] \" + e)\n"
+                    "    }\n"
+                    "}\n"
+                    "\n"
+                    "// [EUR40] shared helpers: the engine's live army limit (20, or 40 in the 40/40 army mode).\n"
+                    "// Defined here so the cap lines in EUR's scripts never depend on the add-on folder.\n"
+                    "if (!(\"armyLimit\" in ::EUR)) {\n"
+                    "    ::EUR.armyLimit <- function() {\n"
+                    "        try { return ::game.options.armyMaxSize() } catch (e) { return 20 }\n"
+                    "    }\n"
+                    "}\n"
+                    "if (!(\"garrisonUnitCap\" in ::EUR)) {\n"
+                    "    ::EUR.garrisonUnitCap <- function() {\n"
+                    "        local l = ::EUR.armyLimit()\n"
+                    "        return l <= 20 ? 20 : l - 10\n"
+                    "    }\n"
+                    "}\n"
+                    "// [EUR40] auto-load the optional add-on modules under script/eur40/ (absent folder = no-op);\n"
+                    "// the core module goes first, the rest in whatever order the engine lists them.\n"
+                    "try {\n"
+                    "    try { require(\"eur40.eur40Core\") } catch (e) {}\n"
+                    "    foreach (name in ::scripting.listModules(\"eur40\")) {\n"
+                    "        if (name == \"eur40.eur40Core\") continue\n"
+                    "        try { require(name) } catch (e) { println(\"eur40: MODULE FAILED [\" + name + \"] \" + e) }\n"
+                    "    }\n"
+                    "} catch (e) {}\n"
                 ),
             ),
         ),

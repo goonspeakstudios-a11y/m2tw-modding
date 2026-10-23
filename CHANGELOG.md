@@ -7,6 +7,18 @@ Technical detail per fix (root cause, exact hunks) lives in
 `hotfixes/eurex-1.5-hotfix-1/CHANGES.md`; the exact diffs against stock 1.5 are in
 `eurex-1.5/diffs/`.
 
+## 1.5.3 - 2026-10-22 - caps follow the engine army limit (`EUR_1.5.3_FixPack.zip`, NOT YET BUILT)
+
+Everything from 1.5.2 plus five more files. No change in a normal 20-unit campaign: every edited
+line reads the engine's live army limit, which is 20 unless the campaign was started in M2EX's
+40-unit army mode. This is the groundwork the separate "EUR 40 units" add-on builds on, so the
+two packs can be installed in either order.
+
+| # | What a player sees | File | Since | Needs |
+|---|---|---|---|---|
+| 8 | AI free garrisons, global recruitment deliveries, unit upgrades, leader/heir bodyguard swaps and spawned generals stop at the campaign's real army limit instead of a hard 20. | `script/eur/garrisons/eurGarrisons.nut`, `script/eur/global_recruitment/eurGlobalRecruitment.nut`, `script/eur/upgrades/eurGeneralBGSwap.nut`, `script/eur/upgrades/eurLeaderHeirSwap.nut`, `script/eur/campaign/eurSpawnGeneral.nut`, helpers in `script/helper/eurCampaignTriggers.nut` | 2026-10-22 | restart |
+| 9 | `script/main.nut` gains one block that loads optional add-on modules from `script/eur40/` when that folder exists. Hunk patch on the mod's own 1.5 file; the module list is untouched. | `script/main.nut` | 2026-10-22 | restart |
+
 ## 1.5.2 - 2026-10-22 - stable pack for EUREX 1.5 (`EUR_1.5.2_FixPack.zip`)
 
 Requires Divide and Conquer EUR 2.08 with the EUREX 1.5 overlay and the M2EX engine build of
