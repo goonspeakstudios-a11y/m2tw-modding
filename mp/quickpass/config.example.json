@@ -1,0 +1,16 @@
+{
+  "me": "chase",
+  "secret_env": "EURMP_SECRET",
+  "port": 47815,
+  "saves_dir": "D:/SteamLibrary/steamapps/common/Medieval II Total War/mods/Divide_and_Conquer_EUR/saves",
+  "save_glob": "*MP*.sav",
+  "stable_seconds": 3,
+  "launch": ["D:/SteamLibrary/steamapps/common/Medieval II Total War/M2EX.exe"],
+  "launch_cwd": "D:/SteamLibrary/steamapps/common/Medieval II Total War",
+  "process_name": "M2EX.exe",
+  "players": [
+    {"name": "chase", "host": "100.64.0.1"},
+    {"name": "player2", "host": "100.64.0.2"},
+    {"name": "player3", "host": "100.64.0.3"}
+  ]
+}
